@@ -1,0 +1,526 @@
+\documentclass[12pt]{extarticle}
+\usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm]{geometry}
+
+% Установка отступа для первого абзаца
+\usepackage{indentfirst}
+\setlength{\parindent}{1cm} % Устанавливаем отступ в 1 см
+
+% Пакеты для поддержки кириллицы и правильного отображения русского текста
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+
+% Пакеты для работы с изображениями, математикой и листингом кода
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+% Пакет для фиксации позиций объектов
+\usepackage{float}
+
+% Пакет для предотвращения перепрыгивания объектов на следующую страницу
+\usepackage{placeins}
+
+% Пакет для библиографии
+\usepackage{biblatex}
+\addbibresource{bibliography.bib} % Указываем файл с библиографией
+
+% Настройки листинга кода
+\lstset{language=Python, % Указываем язык программирования
+        basicstyle=\ttfamily, % Устанавливаем моноширинный шрифт
+        keywordstyle=\color{blue}, % Цвет ключевых слов
+        commentstyle=\color{green}, % Цвет комментариев
+        stringstyle=\color{red}, % Цвет строк
+        numbers=left, % Нумерация строк слева
+        numberstyle=\tiny, % Размер шрифта для номеров строк
+        stepnumber=1, % Каждый номер строки
+        numbersep=10pt, % Расстояние между номерами строк и кодом
+        showspaces=false, % Показывать пробелы в коде
+        showstringspaces=false, % Показывать пробелы в строках
+        frame=single, % Рамка вокруг кода
+        breaklines=true, % Перенос длинных строк
+        breakatwhitespace=true, % Перенос только по пробелам
+        tabsize=4 % Размер табуляции
+}
+
+% Заголовок документа
+\title{Нейроэволюционные вычисления}
+\author{}
+\author{
+Преподаватель       Григорьев Д.С.\\
+Студент гр. 8ВМ32   Стрекаловский И.С.}
+\date{\today}
+
+\begin{document}
+
+% Создание заголовка
+\maketitle
+
+\section{Цель работы}
+
+Необходимо реализовать алгоритм согласно варианту на любом языке программирования.
+
+\section{Задачи}
+
+% Начало таблицы
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|} % Определение столбцов таблицы: 3 столбца, все выровнены по центру (c), вертикальные линии между столбцами
+\hline % Горизонтальная линия вверху таблицы
+Вариант 20 & Алгоритм & Топология \\ % Элементы первой строки таблицы, разделенные символом &, переход на следующий столбец
+\hline % Горизонтальная линия после первой строки
+20. & NCL & Без ограничений на структуру \\ % Элементы второй строки таблицы
+\hline % Горизонтальная линия внизу таблицы
+\end{tabular}
+\end{table}
+
+\section{Теоретическая часть}
+
+\subsection{Алгоритм NCL}
+
+Задачи классификации и аппроксимации можно решать не только с использованием одной ИНС, но и с применением множества нейронных сетей, когда решение о значении аппроксимируемой переменной/классе принимается «коллективно». В этом случае
+говорят о комитете, или ансамбле ИНС, либо аппроксиматоров/классификаторов для более общего случая. Методы обучения множества классификаторов, работающих совместно, часто называют комитетными.
+
+Метод, связанный с обучением ансамбля ИНС таким образом, чтобы их выходные сигналы как можно меньше коррелировали, Negative Correlation Learning (NCL), разработан Зином Яо и Йонгом Лю [4]. Сам по себе этот подход не является эволюционным, ИНС обучаются традиционным градиентным алгоритмом, однако есть и разновидность, использующая эволюционное обучение [5].
+
+\subsection{Идея Negative Correlation Learning}
+
+Рассматривается ансамбль ИНС. Выходной сигнал вычисляется по формуле:
+
+\begin{equation} \label{eq:formula1}
+F(n) = \frac{1}{M}\sum_{i=1}^{M} F_i(n) 
+\end{equation}
+
+\noindent
+где \(F_i(n)\) -- выход  \(i\)-й ИНС, \(M\) -- количество ИНС.
+
+В целевую функцию вводится дополнительный штраф за коррелированность выходных сигналов ИНС:
+
+\begin{equation} \label{eq:formula2}
+E_i = \frac{1}{N}\sum_{n=1}^{N}E_i(n)=\frac{1}{N}\sum_{n=1}^{N}\frac{1}{2}(F_i(n)-d(n))^2 + \frac{1}{N}\sum_{n=1}^{N} \lambda p_i(n) \to min
+\end{equation}
+
+\noindent
+где \(E_i(n)\) -- ошибка \(i\)-й ИНС на \(n\)-м обучающем примере, \(d(n)\) -- требуемый выходной сигнал для \(n\)-го обучающего примера, \(N\) -- размер обучающей выборки, \(\lambda\) -- параметр, регулирующий влияние штрафа.
+
+Второе слагаемое в (\ref{eq:formula2}) вычисляется следующим образом:
+
+\begin{equation} \label{eq:formula3}
+p_i(n) = (F_i(n)-F(n))\sum_{j \neq i}^{N}F_j(n) - F(n)
+\end{equation}
+
+Минимизация ЦФ для ансамбля соответствует минимизации ЦФ для каждой сети в отдельности.
+
+В базовом варианте алгоритма NCL обучение ИНС производится традиционным градиентным способом. Кратко суть сводится к следующему: при обучении необходимо вычислить ошибку каждой ИНС и скорректировать ее выходной сигнал. Величина коррекции пропорциональна
+
+\begin{equation} \label{eq:formula4}
+ - \frac{\partial E_i(n)}{\partial F_i(n)}
+\end{equation}
+
+\section{Практическая часть}
+
+\subsection{Описание датасета}
+
+В рамках лабораторной работы решалась задача логистической регрессии на наборе данных Breast Cancer Wisconsin (Diagnostic).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{table.png} % Путь к вашему изображению
+    \caption{Набор данных Breast Cancer Wisconsin}
+    \label{fig:example}
+\end{figure}
+
+\FloatBarrier % Фиксируем положение изображения
+
+В датасете собраны данные по 569 образованиям, которые могут быть злокачественными (раком груди) либо доброкачественными.
+% Ненумерованный список
+\begin{itemize}
+    \item Для каждой из 10 базовых характеристик опухоли (таких как, радиус, текстура, периметр, площадь и т.д.) рассчитаны три значения (среднее арифметическое, СКО и среднее трёх наибольших значений). Таким образом, получается 30 параметров или признаков;
+    \item Помимо этого, каждое образование классифицировано как злокачественное или доброкачественное.
+\end{itemize}
+
+Задача заключается в том, чтобы построить модель, которая, используя эти признаки, сможет с высокой долей уверенности говорить о том, злокачественная перед нами опухоль или нет.
+
+\subsection{Описание модели}
+Для алгоритма использовались следующие параметры:
+
+% Ненумерованный список
+\begin{itemize}
+    \item количество эпох(1000);
+    \item количество сетей(10);
+    \item количество нейронов в скрытом слое(10);
+    \item Скорость обучения(0.001);
+    \item функция активации(ReLu).
+\end{itemize}
+
+Схематичное представление ансамбля моделей NCL(Negative Correlation Learning).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{ncl_img.png} % Путь к вашему изображению
+    \caption{Схема ансамбля моделей ИНС}
+    \label{fig:example}
+\end{figure}
+
+\FloatBarrier % Фиксируем положение изображения
+
+График сходимости на протяжении всего обучения ансамбля моделей ИНС.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{res.png} % Путь к вашему изображению
+    \caption{График сходимости ансамбля моделей}
+    \label{fig:example}
+\end{figure}
+
+\FloatBarrier % Фиксируем положение изображения
+
+Время затраченное на обучение = 5.68 секунды  Точность при разных значениях \(\lambda\):  \(\lambda\) = 0 RMSE = 0.0890. \(\lambda\) = 1 RMSE = 0.0883. 
+
+Метрика RMSE расчитываетя по следующей формуле:
+
+\begin{equation} \label{eq:formula4}
+ RMSE = \sqrt{\sum_{i=1}^{n}\frac{(\bar{y_i} - y_i)^2}{n}}
+\end{equation}
+
+\section{Вывод}
+В ходе лабораторной работы был реализован алгоритм NCL(Negative Correlation Learning) для решения задачи логистической регрессии с набором данных Breast Cancer Wisconsin. При работе алгоритма с значением параметра \(\lambda\) = 0 точно RMSE была равно 0.0890, а с \(\lambda\) = 0 \(RMSE\) = 0.0883, что показало эффективность использование данного алгоритма по сравнению с одной полносвязной ИНС.
+
+Код программы размещен на github по ссылке: \href{https://github.com/Akumarus/NCL.git}{\textcolor{blue}{https://github.com/Akumarus/NCL.git}}
+
+\newpage % Разрыв страницы
+
+\section{Листинг кода}
+
+Листинг 1 -- Импортирование библиотек
+
+\begin{lstlisting}
+from math import sqrt
+import time
+
+import pandas as pd
+
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn import datasets, preprocessing, model_selection
+from sklearn.metrics import mean_squared_error
+
+from activation import fun_dict
+\end{lstlisting}
+
+Листинг 2 Загрузка Датасета и расчет RMSE
+
+\begin{lstlisting}
+def load_dataset():
+    """
+    Load data from Boston housing regression.
+    :return: data scaled and target.
+    """
+    x, y = datasets.load_breast_cancer(return_X_y=True)
+    x = preprocessing.scale(x)
+    y = y.reshape(len(y), 1)
+    return x, y
+
+def rmse(a, b):
+    """
+    Root Mean Squared Error metric.
+    :param a:
+    :param b:
+    :return: RMSE value
+    """
+    return sqrt(mean_squared_error(a, b)) 
+\end{lstlisting}
+
+\newpage % Разрыв страницы
+
+Листинг 3 -- Запуск алгоритма
+
+\begin{lstlisting}
+# Load dataset
+x, y = load_dataset()
+x_train, x_test, y_train, y_test = model_selection.train_test_split(x, y, test_size= 0.1, random_state=0)
+print('Train = ',  x_train.shape[0])
+print('Test = ',   x_test.shape[0])
+print('Colums = ', x_train.shape[1])
+
+# Train params
+max_iter = 1000
+size = 10
+h = 10                  
+learning_rate = 0.001
+
+# Create model
+ncl1 = NCL()
+ncl2 = NCL()
+
+# Train
+ncl1.train(x, y, size=size, neurons=h, max_iter=max_iter, lambda_= 0, learning_rate=learning_rate, neural_fun='sigmoid', fun_dict=fun_dict)
+train_time_start = time.perf_counter()
+ncl2.train(x, y, size=size, neurons=h, max_iter=max_iter, lambda_= 1, learning_rate=learning_rate, neural_fun='sigmoid', fun_dict=fun_dict)
+train_time_end = time.perf_counter()
+
+# Test
+pred1 = ncl1.predict(x_test)
+test_time_start = time.perf_counter()
+pred2 = ncl2.predict(x_test)
+test_time_end = time.perf_counter()
+
+# Model save
+ncl2.save_model('ncl_ensemble.pkl')
+
+# Train time
+print('Train time =', train_time_end - train_time_start)
+print('Test  time=', test_time_end - test_time_start)
+\end{lstlisting}
+
+\newpage
+
+Продолжение Листинг 3
+
+\begin{lstlisting}
+# RMSE
+rmse_value1 = rmse(pred1, y_test)
+rmse_value2 = rmse(pred2, y_test)
+print('RMSE lambda = 0:', rmse_value1)
+print('RMSE lambda = 1:', rmse_value2)
+
+# plot results
+plt.plot(ncl1.rmse_array)
+plt.plot(ncl2.rmse_array)
+plt.xlabel('Iterations')
+plt.ylabel('RMSE')
+plt.grid()
+plt.show()
+\end{lstlisting}
+
+Листинг 4 -- Класс обычной ИНС
+
+\begin{lstlisting}
+import numpy as np
+import pickle
+from graphviz import Digraph
+class NeuralNetwork:
+    """
+    Neural Network.
+    """
+    def __init__(self, seed=None):
+        np.random.seed(seed)
+
+    def get_layers(self):
+        self.get_input_layer()
+        self.get_output_layer()
+
+    def get_input_layer(self):
+        self.input_weight = np.random.random((self.dim, self.neurons)) * 2.0 - 1.0
+        self.bias_input_layer = np.zeros((self.neurons, 1))
+
+    def get_output_layer(self):
+        self.output_weight = np.random.random((self.neurons, 1))  * 2.0 - 1.0
+        self.bias_output_layer = np.zeros((self.t, 1))
+\end{lstlisting}
+
+\newpage
+
+Продолжение Листинг 4
+
+\begin{lstlisting}
+    def initial(self, x, y, max_iter, neurons, learning_rate, neuronal_fun, fun_dict):
+        self.dim = x.shape[1]
+        self.t = y.shape[1]
+        self.max_iter = max_iter
+        self.neurons = neurons
+        self.learning_rate = learning_rate
+        self.activation = fun_dict[neuronal_fun]['activation']
+        self.activation_der = fun_dict[neuronal_fun]['derivative']
+        self.get_layers()
+        return self
+
+
+    def train(self, x, y,
+              max_iter: int = 1000,
+              neurons: int = 10,
+              learning_rate: float = 1.0,
+              neuronal_fun='sigmoid'):
+
+        self.initial(x=x,
+                     y=y,
+                     max_iter=max_iter,
+                     neurons=neurons,
+                     learning_rate=learning_rate,
+                     neuronal_fun=neuronal_fun)
+
+        for iteration in range(self.max_iter):
+            # print('Iteration =', iteration)
+            self.backward(x, y)
+           
+    def train(self, x, y, max_iter=500, neurons=5, learning_rate=0.01, neuronal_fun='sigmoid', fun_dict=None):
+        self.initial(x=x, y=y, max_iter=max_iter, neurons=neurons, learning_rate=learning_rate, neuronal_fun=neuronal_fun, fun_dict=fun_dict)
+        for iteration in range(self.max_iter):
+            self.backward(x, y)
+\end{lstlisting}
+
+\newpage
+
+Продолжение Листинг 4
+            
+\begin{lstlisting} 
+    def backward(self, x, y, penalty=0):
+        hidden_layer, output_layer = self.forward(x)
+        error = output_layer - y
+        nc_error = error + penalty
+
+        output_delta = nc_error * self.activation_der(self.temp_o)
+        self.bias_output_layer -= np.mean(self.learning_rate * output_delta)
+        self.output_weight -= self.learning_rate * np.dot(hidden_layer.T, output_delta)
+
+        hidden_delta = np.dot(output_delta, self.output_weight.T) * self.activation_der(self.temp_h)
+        self.bias_input_layer -= np.mean(self.learning_rate * hidden_delta, axis=0).reshape(self.neurons, 1)
+        self.input_weight -= self.learning_rate * np.dot(x.T, hidden_delta)
+
+    def forward(self, x_test):
+        self.temp_h = np.dot(x_test, self.input_weight) + self.bias_input_layer.T
+        hidden_layer = self.activation(self.temp_h)
+        self.temp_o = np.dot(hidden_layer, self.output_weight) + self.bias_output_layer.T
+        output_layer = self.activation(self.temp_o)
+        return hidden_layer, output_layer
+
+    def predict(self, x_test):
+        _, output_layer = self.forward(x_test)
+        return output_layer
+
+    def predict(self, x_test):
+        _, output_layer = self.forward(x_test)
+        return output_layer
+
+    def save_model(self, file_path):
+        with open(file_path, 'wb') as f:
+            pickle.dump(self, f)
+
+    @staticmethod
+    def load_model(file_path):
+        with open(file_path, 'rb') as f:
+            return pickle.load(f)
+        
+\end{lstlisting}
+
+\newpage
+
+Листинг 5 -- Класс NCL
+
+\begin{lstlisting}
+class NCL:
+    def __init__(self):
+        self.base_learner = []
+        self.rmse_array = None
+
+    def visualize(self, file_path='ncl_ensemble', node_size=0.1, graph_size=100, horizontal_spacing=10):
+        dot = Digraph()
+
+        dot.attr(rankdir='LR')
+        dot.attr(size=f'{graph_size},{graph_size}!')
+        
+        dot.attr(ranksep=str(horizontal_spacing))
+
+        for i, learner in enumerate(self.base_learner):
+            dot.node(f'Learner {i}', label=f'Learner {i}', shape='ellipse')
+            learner_dot = Digraph()
+
+            learner_dot.attr(rankdir='LR')
+
+            # Input layer
+            for j in range(learner.dim):
+                learner_dot.node(f'Input {j}', shape='circle', width=str(node_size), height=str(node_size))
+
+            # Hidden layer
+            for k in range(learner.neurons):
+                learner_dot.node(f'Hidden {k}', shape='circle', width=str(node_size), height=str(node_size))
+
+            # Output layer
+            learner_dot.node('Output', shape='circle', width=str(node_size), height=str(node_size))
+
+            # Input to hidden layer connections
+            for j in range(learner.dim):
+                for k in range(learner.neurons):
+                    learner_dot.edge(f'Input {j}', f'Hidden {k}', label=f'{learner.input_weight[j, k]:.2f}')
+
+            # Hidden to output layer connections
+            for k in range(learner.neurons):
+                learner_dot.edge(f'Hidden {k}', 'Output', label=f'{learner.output_weight[k, 0]:.2f}')
+\end{lstlisting}
+
+\newpage
+
+Продолжение Листинг 5
+            
+\begin{lstlisting} 
+            learner_dot.render(f'{file_path}_learner_{i}', format='png', cleanup=True)
+            dot.subgraph(learner_dot)
+
+        dot.render(file_path, format='png', cleanup=True)
+    
+    def train(self, x, y, size, neurons, max_iter, lambda_, learning_rate, neural_fun='sigmoid', fun_dict=None):
+        self.size = size
+        self.max_iter = max_iter
+        self.lambda_ = lambda_
+        self.base_learner = [NeuralNetwork(seed=s).initial(x=x, y=y, neurons=neurons, learning_rate=learning_rate, neuronal_fun=neural_fun, max_iter=max_iter, fun_dict=fun_dict)
+                             for s in range(self.size)]
+
+        self.rmse_array = np.inf * np.ones(self.max_iter)
+
+        for iteration in range(self.max_iter):
+            f_bar = self.predict(x)
+            for s in range(self.size):
+                penalty = self.lambda_ * (self.base_learner[s].predict(x) - f_bar)
+                self.base_learner[s].backward(x, y, penalty)
+            self.rmse_array[iteration] = np.sqrt(np.mean((f_bar - y) ** 2))
+
+    def predict(self, x):
+        f_bar = np.mean([learner.predict(x) for learner in self.base_learner], axis=0)
+        return f_bar
+
+    def save_model(self, file_path):
+        with open(file_path, 'wb') as f:
+            pickle.dump(self, f)
+
+    @staticmethod
+    def load_model(file_path):
+        with open(file_path, 'rb') as f:
+            return pickle.load(f)
+\end{lstlisting}
+
+\newpage
+
+Листинг 6 -- Загрузка сохраненной модели
+
+\begin{lstlisting}
+# Load model
+loaded_ncl = NCL.load_model('ncl_ensemble.pkl')
+
+# Test model
+pred= loaded_ncl.predict(x_test)
+rmse_value = rmse(pred, y_test)
+print('RMSE =', rmse_value)
+\end{lstlisting}
+
+\begin{thebibliography}{9}
+\bibitem{bishop} 
+C. Bishop. \textit{Pattern Recognition and Machine Learning}. Springer, 2006.
+
+\bibitem{breiman} 
+L. Breiman. Bagging predictors. \textit{Machine Learning}, 24(2):123–140, 1996.
+
+\bibitem{freund-schapire} 
+Y. Freund and R. E. Schapire. Decision-theoretic generalization of on-line learning and an application to boosting. \textit{Journal of Computer and System Sciences}, 55(1):pp. 119–139, 1997.
+
+\bibitem{liu-yao} 
+Y. Liu and X. Yao. Ensemble learning via negative correlation. \textit{Neural Networks}, 12(10):1399–1404, December 1999.
+
+\bibitem{liu-yao-higuchi} 
+Y. Liu, X. Yao, and T. Higuchi. Evolutionary ensembles with negative correlation learning. \textit{IEEE Transactions on Evolutionary Computation}, 4(4):380–387, November 2000.
+
+\bibitem{schapire} 
+R. E. Schapire. The strength of weak learnability. \textit{Machine Learning}, 5(2):pp. 197–227, 1990.
+\end{thebibliography}
+
+\end{document}
