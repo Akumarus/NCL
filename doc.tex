@@ -42,20 +42,66 @@
         breaklines=true, % Перенос длинных строк
         breakatwhitespace=true, % Перенос только по пробелам
         tabsize=4 % Размер табуляции
+        inputencoding=utf8, % Кодировка ввода
 }
 
 % Заголовок документа
-\title{Нейроэволюционные вычисления}
-\author{}
-\author{
-Преподаватель       Григорьев Д.С.\\
-Студент гр. 8ВМ32   Стрекаловский И.С.}
-\date{\today}
+%\title{Нейроэволюционные вычисления}
+%\author{}
+%\author{
+%Преподаватель       Григорьев Д.С.\\
+%Студент гр. 8ВМ32   Стрекаловский И.С.}
+%\date{\today}
 
 \begin{document}
 
-% Создание заголовка
-\maketitle
+\begin{titlepage}
+    \centering
+    
+    {\bfseries\Large МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ РОССИЙСКОЙ ФЕДЕРАЦИИ\\}
+    \vspace{0.5cm}
+    {\large Федеральное государственное автономное образовательное учреждение высшего профессионального образования\\}
+    \vspace{0.5cm}
+    {\bfseries\Large НАЦИОНАЛЬНЫЙ ИССЛЕДОВАТЕЛЬСКИЙ ТОМСКИЙ ПОЛИТЕХНИЧЕСКИЙ УНИВЕРСИТЕТ\\}
+    \vspace{0.5cm}
+    {\large Инженерная школа информационных технологий и робототехники\\}
+    {\large Направление 09.04.01 Информатика и вычислительная техника\\}
+    {\large Отделение информационных технологий\\}
+    \vspace{1cm}
+    {\large Отчет по лабораторной работе\\}
+    \vspace{0.5cm}
+    {\large\underline{\ <<Реализация нейроэволюционного алгоритма>>}\\}
+    \vspace{0.1cm}
+    {\small Наименование лабораторной работы\\}
+    \vspace{0.5cm}
+    {\large Вариант 20\\}
+    \vspace{0.5cm}
+    {\large По дисциплине \\}
+    \vspace{0.5cm}
+    {\large\underline{Нейроэволюционные вычисления}\\}
+    \vspace{0.1cm}
+    {\small Наименование учебной дисциплины\\}
+    \vspace{2cm}
+
+    % Таблица 5 на 2 без границ
+    \begin{tabular}{p{3cm} p{4cm} p{2cm} p{2cm} p{4cm} }
+        Выполнил & студент гр.8ВМ32 & \hrulefill & \hrulefill & Стрекаловский И.С. \\
+         &  & \centering\small Подпись & \centering\small Дата &  \\
+    \end{tabular}
+
+    \vspace{2cm}
+    
+    % Таблица 5 на 2 без границ
+    \begin{tabular}{p{3cm} p{4cm} p{2cm} p{2cm} p{4cm} }
+        Проверил & \underline{ст. преподаватель} & \hrulefill & \hrulefill & Григорьев Д.С. \\
+         & \centering\small Должность & \centering\small Подпись & \centering\small Дата &  \\
+    \end{tabular}
+
+    \vspace{2cm}
+
+    {\large Томск 2024 \\}
+
+\end{titlepage}
 
 \section{Цель работы}
 
@@ -118,6 +164,23 @@ p_i(n) = (F_i(n)-F(n))\sum_{j \neq i}^{N}F_j(n) - F(n)
  - \frac{\partial E_i(n)}{\partial F_i(n)}
 \end{equation}
 
+\subsection{Эволюционный вариант NCL}
+Несмотря на то, что алгоритм NCL успешно используется и при градиентном обучении, существует его «эволюционный» вариант:
+
+% Ненумерованный список
+\begin{enumerate}
+    \item Инициализация популяции из \(M\) ИНС;
+    \item Обучение каждой ИНС в течение фиксированного количества поколений;
+    \item Случайный выбор \(nb\) родительских ИНС для порождения \(nb\) потомков;
+    \item Добавление потомков в популяцию и обучение. Веса других ИНС – "заморожены;
+    \item Вычисление приспособленности ИНС и селекция \(M\) лучших;
+    \item Если алгоритм не закончен, то перейти на Шаг 3;
+    \item Формирование видов с помощью алгоритма \(k\)-средних селекция \(M\) лучших;
+    \item Комбинирование видов для формирования ансамблей.
+\end{enumerate}
+
+\newpage % Разрыв страницы
+
 \section{Практическая часть}
 
 \subsection{Описание датасета}
@@ -142,15 +205,18 @@ p_i(n) = (F_i(n)-F(n))\sum_{j \neq i}^{N}F_j(n) - F(n)
 
 Задача заключается в том, чтобы построить модель, которая, используя эти признаки, сможет с высокой долей уверенности говорить о том, злокачественная перед нами опухоль или нет.
 
-\subsection{Описание модели}
+\newpage % Разрыв страницы
+
+\subsection{NCL}
 Для алгоритма использовались следующие параметры:
 
 % Ненумерованный список
 \begin{itemize}
-    \item количество эпох(1000);
-    \item количество сетей(10);
-    \item количество нейронов в скрытом слое(10);
+    \item Количество эпох(500);
+    \item Количество сетей(6);
+    \item Количество нейронов в скрытом слое(5);
     \item Скорость обучения(0.001);
+    \item Количество итераций для обучения ансамбля (50);
     \item функция активации(ReLu).
 \end{itemize}
 
@@ -170,13 +236,13 @@ p_i(n) = (F_i(n)-F(n))\sum_{j \neq i}^{N}F_j(n) - F(n)
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{res.png} % Путь к вашему изображению
-    \caption{График сходимости ансамбля моделей}
+    \caption{График сходимости ансамбля моделей NCL}
     \label{fig:example}
 \end{figure}
 
 \FloatBarrier % Фиксируем положение изображения
 
-Время затраченное на обучение = 5.68 секунды  Точность при разных значениях \(\lambda\):  \(\lambda\) = 0 RMSE = 0.0890. \(\lambda\) = 1 RMSE = 0.0883. 
+Время затраченное на обучение = 5.68 секунды  Точность при разных значениях \(\lambda\):  \(\lambda\) = 0 WTA RMSE = 0.203, Mean RMSE = 0.188. \(\lambda\) = 1 WTA RMSE = 0.173, Mean RMSE = 0.173. 
 
 Метрика RMSE расчитываетя по следующей формуле:
 
@@ -184,8 +250,85 @@ p_i(n) = (F_i(n)-F(n))\sum_{j \neq i}^{N}F_j(n) - F(n)
  RMSE = \sqrt{\sum_{i=1}^{n}\frac{(\bar{y_i} - y_i)^2}{n}}
 \end{equation}
 
+Граф получившихся сетей представленые на рисунках (4, 5, 6,):
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{ncl2.png} % Путь к вашему изображению
+    \caption{Граф обученных ИНС с одним скрытым слоем методом NCL}
+    \label{fig:example}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{ncl3.png} % Путь к вашему изображению
+    \caption{Граф обученных ИНС с одним скрытым слоем методом NCL}
+    \label{fig:example}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{ncl1.png} % Путь к вашему изображению
+    \caption{Граф обученных ИНС с одним скрытым слоем методом NCL}
+    \label{fig:example}
+\end{figure}
+
+\newpage % Разрыв страницы
+
+\subsection{EENCL}
+Для алгоритма использовались следующие параметры:
+
+% Ненумерованный список
+\begin{itemize}
+    \item Количество эпох(500);
+    \item Количество сетей(6);
+    \item Количество нейронов в скрытом слое(5);
+    \item Скорость обучения(0.001);
+    \item Количество итераций для обучения ансамбля (50);
+    \item Функция активации(ReLu).
+    \item Скорость мутации(0.01).
+    \item Количествово родителей, которые породят следующую популяцию(4).
+    \item Количество потомков(4).
+\end{itemize}
+
+График сходимости на протяжении всего обучения ансамбля моделей ИНС.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{eencl_img.png} % Путь к вашему изображению
+    \caption{График сходимости ансамбля моделей EENCL}
+    \label{fig:example}
+\end{figure}
+
+\FloatBarrier % Фиксируем положение изображения
+
+Время затраченное на обучение = 15.58 секунды  Точность WTA RMSE = 0.783, Mean RMSE = 0.184, RMSE для голосования = 0.783
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{eencl2.png} % Путь к вашему изображению
+    \caption{Граф обученных ИНС с одним скрытым слоем методом EENCL}
+    \label{fig:example}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{eencl3.png} % Путь к вашему изображению
+    \caption{Граф обученных ИНС с одним скрытым слоем методом EENCL}
+    \label{fig:example}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{eencl1.png} % Путь к вашему изображению
+    \caption{Граф обученных ИНС с одним скрытым слоем методом EENCL}
+    \label{fig:example}
+\end{figure}
+
+\newpage % Разрыв страницы
+
 \section{Вывод}
-В ходе лабораторной работы был реализован алгоритм NCL(Negative Correlation Learning) для решения задачи логистической регрессии с набором данных Breast Cancer Wisconsin. При работе алгоритма с значением параметра \(\lambda\) = 0 точно RMSE была равно 0.0890, а с \(\lambda\) = 0 \(RMSE\) = 0.0883, что показало эффективность использование данного алгоритма по сравнению с одной полносвязной ИНС.
+В ходе лабораторной работы был реализован алгоритм NCL(Negative Correlation Learning) для решения задачи логистической регрессии с набором данных Breast Cancer Wisconsin. Время затраченное на обучение  NCL= 5.68 секунды  Точность при разных значениях \(\lambda\):  \(\lambda\) = 0 WTA RMSE = 0.203, Mean RMSE = 0.188. \(\lambda\) = 1 WTA RMSE = 0.173, Mean RMSE = 0.173. Время затраченное на обучение EENCL = 15.58 секунды  Точность WTA RMSE = 0.783, Mean RMSE = 0.184, RMSE для голосования = 0.783 Оба метода показали эффективность их использование по сравнению с одной полносвязной ИНС.
 
 Код программы размещен на github по ссылке: \href{https://github.com/Akumarus/NCL.git}{\textcolor{blue}{https://github.com/Akumarus/NCL.git}}
 
@@ -196,312 +339,505 @@ p_i(n) = (F_i(n)-F(n))\sum_{j \neq i}^{N}F_j(n) - F(n)
 Листинг 1 -- Импортирование библиотек
 
 \begin{lstlisting}
-from math import sqrt
-import time
-
-import pandas as pd
-
-import matplotlib.pyplot as plt
 import numpy as np
-from sklearn import datasets, preprocessing, model_selection
-from sklearn.metrics import mean_squared_error
+import matplotlib.pyplot as plt
+import pickle
 
-from activation import fun_dict
+from math import sqrt
+from sklearn.cluster import KMeans
+from sklearn import datasets, preprocessing, model_selection
 \end{lstlisting}
 
-Листинг 2 Загрузка Датасета и расчет RMSE
+Листинг 2 Загрузка Датасета
 
 \begin{lstlisting}
 def load_dataset():
-    """
-    Load data from Boston housing regression.
-    :return: data scaled and target.
-    """
     x, y = datasets.load_breast_cancer(return_X_y=True)
     x = preprocessing.scale(x)
     y = y.reshape(len(y), 1)
     return x, y
+\end{lstlisting}
 
-def rmse(a, b):
-    """
-    Root Mean Squared Error metric.
-    :param a:
-    :param b:
-    :return: RMSE value
-    """
-    return sqrt(mean_squared_error(a, b)) 
+
+
+Листинг 3 -- Модель ИНС с одним скрытым слоем
+
+\begin{lstlisting}
+class NN():
+
+  def __init__(self, input_size, hidden_size, output_size):
+    # инициализация весов и смещений скрытого и выходного слоя
+    self.w1 = np.random.rand(input_size, hidden_size)
+    self.w2 = np.random.rand(hidden_size, output_size)
+    self.b1 = np.random.rand(hidden_size)
+    self.b2 = np.random.rand(output_size)
+
+    self.metric = None
+
+  def sigmoid(self, x):
+    return 1 / (1 + np.exp(-x))
+
+  def sigmoid_derivative(self, x):
+    return x * (1 - x)
+
+  def relu(self, x):
+    return np.maximum(0, x)
 \end{lstlisting}
 
 \newpage % Разрыв страницы
 
-Листинг 3 -- Запуск алгоритма
+Продолжение листинга 3
+\begin{lstlisting}
+  def relu_derivative(self, x):
+    return np.where(x > 0, 1, 0)
+
+  def forward(self, input):
+    out = np.matmul(input, self.w1) + self.b1
+    return self.relu(out)
+
+  def train(self, inputs, outputs, epochs, lr, penalty=0):
+
+    self.metric = np.inf * np.ones(epochs)
+
+    for epoch in range(epochs):
+      # Прямое распространение
+      hidden_input = np.matmul(inputs, self.w1) + self.b1
+      hidden_output = self.relu(hidden_input)
+      final_input = np.matmul(hidden_output, self.w2) + self.b2
+      final_output = self.sigmoid(final_input)
+
+      # Вычисление ошибок
+      output_error = outputs - final_output
+      output_error -= penalty
+      hidden_error = np.matmul(output_error, self.w2.T) * self.relu_derivative(hidden_input)
+
+      # Обновление весов и смещений
+      self.w2 += lr * np.matmul(hidden_output.T, output_error)
+      self.b2 += lr * np.sum(output_error, axis=0)
+      self.w1 += lr * np.matmul(inputs.T, hidden_error)
+      self.b1 += lr * np.sum(hidden_error, axis=0)
+      self.metric[epoch] = np.sqrt(np.mean((outputs - final_output) ** 2))
+
+      #if (epoch % 100) == 0:
+      #  print('epoch = ', epoch, '  RMSE = ', self.metric[epoch])
+
+  def predict(self, input):
+    hidden_input = np.matmul(input, self.w1) + self.b1
+    hidden_output = self.relu(hidden_input)
+    final_input = np.matmul(hidden_output, self.w2) + self.b2
+    final_output = self.sigmoid(final_input)
+    return final_output
+\end{lstlisting}
+
+\newpage
+
+%Продолжение Листинг 3
+Листинг 4 -- Модель NCL
 
 \begin{lstlisting}
-# Load dataset
+class NCL():
+
+  def __init__(self, input_size, hidden_size, output_size, M):
+    self.M = M  # Кол-во сетей в ансамбле
+    self.metric = None
+    self.ensamble_nn = [NN(input_size, hidden_size, output_size) for i in range(M)]
+
+  def train(self, inputs, outputs, epochs, generations, lr, lambda_):
+
+    self.metric = np.inf * np.ones(epochs)
+
+    for generation in range(generations):
+      preds = self.predict(inputs)
+      for i in range(self.M):
+        penalty = lambda_ *(self.ensamble_nn[i].predict(inputs) - preds)
+
+        self.ensamble_nn[i].train(inputs, outputs, generations, lr, penalty)
+
+      self.metric[generation] = np.sqrt(np.mean((outputs - preds) ** 2))
+
+      if (generation % 10) == 0:
+        print('epoch = ', generation, '  RMSE = ', self.metric[generation])
+
+  def predict(self, x, method='mean'):
+    if method == 'mean':
+      return np.mean([nn.predict(x) for nn in self.ensamble_nn], axis=0)
+    elif method == 'wta':
+      predictions = np.array([nn.predict(x) for nn in self.ensamble_nn])
+      return predictions[np.argmax(predictions, axis=0), np.arange(len(x))]
+    else:
+      raise ValueError("Invalid method. Choose either 'mean' or 'wta'.")
+\end{lstlisting}
+
+\newpage
+
+Продолжение листинга 4
+
+\begin{lstlisting}
+  def save_model(self, file_path):
+    with open(file_path, 'wb') as f:
+      pickle.dump(self, f)
+
+  @staticmethod
+  def load_model(file_path):
+    with open(file_path, 'rb') as f:
+      return pickle.load(f)
+
 x, y = load_dataset()
 x_train, x_test, y_train, y_test = model_selection.train_test_split(x, y, test_size= 0.1, random_state=0)
-print('Train = ',  x_train.shape[0])
-print('Test = ',   x_test.shape[0])
-print('Colums = ', x_train.shape[1])
 
-# Train params
-max_iter = 1000
-size = 10
-h = 10                  
-learning_rate = 0.001
+input_size = x_train.shape[1] # Кол-в входных признаков
+hidden_size = 5               # Кол-во нейронов на скрытом слое
+output_size = 1               # Кол-во выходных нейронов
+generations = 50              # Кол-во итераций для обучения ансамбля
+epochs = 500                  # Кол-во эпох для обучение ИНС
+lr = 0.001                    # Скорость обучения
+lambda_ = 1                   # Параметр регулирующий влияние штрафа при обучении
+M = 6                         # Кол-во ИНС в ансамбле
 
-# Create model
-ncl1 = NCL()
-ncl2 = NCL()
+# Создание модели NCL
+ncl1 = NCL(input_size, hidden_size, output_size, M)
+ncl2 = NCL(input_size, hidden_size, output_size, M)
 
-# Train
-ncl1.train(x, y, size=size, neurons=h, max_iter=max_iter, lambda_= 0, learning_rate=learning_rate, neural_fun='sigmoid', fun_dict=fun_dict)
-train_time_start = time.perf_counter()
-ncl2.train(x, y, size=size, neurons=h, max_iter=max_iter, lambda_= 1, learning_rate=learning_rate, neural_fun='sigmoid', fun_dict=fun_dict)
-train_time_end = time.perf_counter()
+# Обучение NCL
+ncl1.train(x_train, y_train, epochs, generations, lr, 0)
+ncl2.train(x_train, y_train, epochs, generations, lr, 1)
 
-# Test
-pred1 = ncl1.predict(x_test)
-test_time_start = time.perf_counter()
-pred2 = ncl2.predict(x_test)
-test_time_end = time.perf_counter()
-
-# Model save
-ncl2.save_model('ncl_ensemble.pkl')
-
-# Train time
-print('Train time =', train_time_end - train_time_start)
-print('Test  time=', test_time_end - test_time_start)
+# Сохранение моделей
+ncl1.save_model('ncl1_ensemble.pkl')
+ncl2.save_model('ncl2_ensemble.pkl')
 \end{lstlisting}
 
 \newpage
 
-Продолжение Листинг 3
+Продолжение листинга 4
 
 \begin{lstlisting}
-# RMSE
-rmse_value1 = rmse(pred1, y_test)
-rmse_value2 = rmse(pred2, y_test)
-print('RMSE lambda = 0:', rmse_value1)
-print('RMSE lambda = 1:', rmse_value2)
+print(x_test.shape)
+pred1_wta  = ncl1.predict(x_test, 'wta')
+pred1_mean = ncl1.predict(x_test, 'mean')
+pred2_wta = ncl2.predict(x_test, 'wta')
+pred2_mean = ncl2.predict(x_test, 'mean')
 
-# plot results
-plt.plot(ncl1.rmse_array)
-plt.plot(ncl2.rmse_array)
-plt.xlabel('Iterations')
-plt.ylabel('RMSE')
-plt.grid()
+ncl1_wta_rmse  = np.sqrt(np.mean((y_test - pred1_wta) ** 2))
+ncl1_mean_rmse = np.sqrt(np.mean((y_test - pred1_mean) ** 2))
+ncl2_wta_rmse  = np.sqrt(np.mean((y_test - pred2_wta ) ** 2))
+ncl2_mean_rmse = np.sqrt(np.mean((y_test - pred2_mean) ** 2))
+
+print('WTA  RMSE lambda = 0:', ncl1_wta_rmse)
+print('Mean RMSE lambda = 0:', ncl1_mean_rmse)
+print('\n')
+print('WTA  RMSE lambda = 1:', ncl2_wta_rmse)
+print('Mean RMSE lambda = 1:', ncl2_mean_rmse)
+
+plt.plot(ncl1.metric)
+plt.plot(ncl2.metric)
+\end{lstlisting}
+
+\newpage
+
+Листинг 5 -- Модель EENCL
+
+\begin{lstlisting}
+ class EENCL():
+
+  def __init__(self, input_size, hidden_size, output_size, M):
+    self.population_size = M
+    self.metric = None
+    self.population = [NN(input_size, hidden_size, output_size) for i in range(M)]
+
+  def combine_average(self, ensemble, inputs):
+    # Комбинирование прогнозов нейронных сетей в ансамбле с помощью усреднения.
+    predictions = np.array([nn.predict(inputs) for nn in ensemble])
+    return np.mean(predictions, axis=0)
+
+  def combine_voting(self, ensemble, inputs):
+    # Комбинирование прогнозов нейронных сетей в ансамбле с помощью голосования.
+    predictions = np.array([nn.predict(inputs) for nn in ensemble])
+    return np.argmax(np.sum(predictions, axis=0), axis=1)
+
+  def combine_wta(self, ensemble, inputs):
+    # Комбинирование прогнозов нейронных сетей в ансамбле с помощью метода Winner-Takes-All (WTA)
+    predictions = np.array([nn.predict(inputs) for nn in ensemble])
+    return np.argmax(np.max(predictions, axis=0), axis=1)
+
+  def form_ensemble(self, population, species):
+    # Формирование ансамбля нейронных сетей на основе кластеризации.
+    ensemble = []
+    unique_species = np.unique(species)
+    for species_id in unique_species:
+        members = [population[i] for i, s in enumerate(species) if s == species_id]
+        ensemble.append(members)
+    return ensemble
+\end{lstlisting}
+
+\newpage
+
+Продолжение листинга 5
+
+\begin{lstlisting}
+  def evaluate_population(self, population, inputs, outputs):
+    # Оценка качества нейронных сетей в популяции
+    fitness_scores = []
+    for nn in population:
+        predictions = nn.predict(inputs)
+        rmse = np.sqrt(np.mean((outputs - predictions) ** 2))
+        fitness_scores.append(rmse)
+    return fitness_scores
+
+  def select_parents(self, population, fitness_scores, num_parents):
+    # Выбор родителей для размножения на основе их качества
+    selected_indices = np.argsort(fitness_scores)[:num_parents]
+    return [population[i] for i in selected_indices]
+
+  def crossover(self, parent1, parent2):
+    # Кроссинговер родителей для создания потомка
+    child = NN(parent1.w1.shape[0], parent1.w1.shape[1], parent1.w2.shape[1])
+    child.w1 = (parent1.w1 + parent2.w1) / 2
+    child.w2 = (parent1.w2 + parent2.w2) / 2
+    child.b1 = (parent1.b1 + parent2.b1) / 2
+    child.b2 = (parent1.b2 + parent2.b2) / 2
+    return child
+
+  def generate_offspring(self, parents, num_offspring):
+    # Генерация потомков на основе выбранных родителей
+    offspring = []
+    for i in range(num_offspring):
+      parent1, parent2 = np.random.choice(parents, 2, replace=False)
+      child = self.crossover(parent1, parent2)
+      offspring.append(child)
+    return offspring
+\end{lstlisting}
+
+\newpage
+
+Продолжение листинга 5
+
+\begin{lstlisting}
+  def mutate(self, population, mutation_rate):
+    # Мутация популяции нейронных сетей
+    for nn in population:
+      for layer in [nn.w1, nn.w2, nn.b1, nn.b2]:
+        layer += np.random.normal(scale=mutation_rate, size=layer.shape)
+
+  def train(self, inputs, outputs, epochs, generations, lr, num_parents, num_offspring, mr):
+    # Обучение ансамбля эволюционных нейронных сетей.
+    self.metric = np.inf * np.ones(generations)
+
+    for generation in range(generations):
+
+      # Обучение всей популяции
+      for nn in self.population:
+        nn.train(inputs, outputs, epochs, lr, 0)
+
+      # Оценка текущей популяции
+      fitness_scores = self.evaluate_population(self.population, inputs, outputs)
+      self.metric[generation] = np.mean(fitness_scores)
+      print(f'Generation {generation}: RMSE = {self.metric[generation]}')
+
+      # Выбор родителей
+      parents = self.select_parents(self.population, fitness_scores, num_parents)
+
+      # Генерация потомков
+      offspring = self.generate_offspring(parents, num_offspring)
+
+      # Мутация
+      self.mutate(offspring, mr)
+
+      # Обучение потомков
+      for child in offspring:
+        child.train(inputs, outputs, epochs, lr)
+\end{lstlisting}
+
+\newpage
+
+Продолжение листинга 5
+
+\begin{lstlisting}
+      # Обновление популяции потомками
+      self.population.extend(offspring)
+      fitness_scores = self.evaluate_population(self.population, inputs, outputs)
+      selected_indices = np.argsort(fitness_scores)[:self.population_size]
+      self.population = [self.population[idx] for idx in selected_indices]
+
+    final_fitness_scores = self.evaluate_population(self.population, inputs, outputs)
+    final_fitness_scores = np.array(final_fitness_scores).reshape(-1, 1)
+
+    # Разделение на 3 кластера
+    kmeans = KMeans(n_clusters=3)
+    species = kmeans.fit_predict(final_fitness_scores)
+
+    # Формирование ансамбля
+    ensemble = self.form_ensemble(self.population, species)
+
+    return self.population, species
+
+  def save_model(self, file_path):
+    # Сохранения модели
+    with open(file_path, 'wb') as f:
+      pickle.dump(self, f)
+
+  def load_model(self, file_path):
+    # Загрузка модели
+    with open(file_path, 'rb') as f:
+      return pickle.load(f)  
+
+x, y = load_dataset()
+x_train, x_test, y_train, y_test = model_selection.train_test_split(x, y, test_size= 0.1, random_state=0)
+\end{lstlisting}
+
+\newpage
+
+Продолжение листинга 5
+
+\begin{lstlisting}
+input_size = x_train.shape[1] # Кол-в входных признаков
+hidden_size = 5               # Кол-во нейронов на скрытом слое
+output_size = 1               # Кол-во выходных нейронов
+generations = 50              # Кол-во итераций для обучения ансамбля
+epochs = 500                  # Кол-во эпох для обучение ИНС
+M = 6                         # Кол-во ИНС в ансамбле
+lr = 0.001                    # Скорость обучения
+mr = 0.01                     # Скорость мутации
+num_parents = 4               # Кол-во родителей, которые породят следующую популяцию
+num_offspring = 4             # Кол-во потомков
+
+eencl = EENCL(input_size, hidden_size, output_size, M)
+ensemble, species  = eencl.train(x_train, y_train, epochs, generations, lr, num_parents, num_offspring, mr)
+
+\end{lstlisting}
+
+\newpage
+
+Продолжение листинга 5
+
+\begin{lstlisting}
+# Сохраняем модель
+eencl.save_model('eencl_ensemble.pkl')
+
+final_ensemble = eencl.form_ensemble(ensemble, species)
+
+# Объединяем все ИНС из final_ensemble в один список
+all_nns = [nn for sublist in final_ensemble for nn in sublist]
+
+# Комбинируем ИНС внутри ансамбля с помощью различных методов
+average_predictions = eencl.combine_average(all_nns, x_test)
+voting_predictions = eencl.combine_voting(all_nns, x_test)
+wta_predictions = eencl.combine_wta(all_nns, x_test)
+
+# Оцениваем прогнозы с использованием метрики качества (например, RMSE)
+rmse_average = np.sqrt(np.mean((y_test - average_predictions) ** 2))
+rmse_voting = np.sqrt(np.mean((y_test - voting_predictions) ** 2))
+rmse_wta = np.sqrt(np.mean((y_test - wta_predictions) ** 2))
+
+print('RMSE для усреднения:', rmse_average)
+print('RMSE для голосования:', rmse_voting)
+print('RMSE для WTA:', rmse_wta)
+
+plt.plot(eencl.metric)
+\end{lstlisting}
+
+\newpage
+
+Листинг 6 -- Визуализация
+            
+\begin{lstlisting} 
+import networkx as nx
+def plot_nn_graph(ax, nn, subplot_title, inputs):
+    G = nx.DiGraph()
+
+    input_size = nn.w1.shape[0]
+    hidden_size = nn.w1.shape[1]
+    output_size = nn.w2.shape[1]
+
+    hidden_output = nn.forward(inputs)
+    final_output  = nn.predict(inputs)
+
+    input_nodes  = [f'I{i}:{round(inputs[i], 2)}' for i in range(input_size)]
+    hidden_nodes = [f'H{i}:{round(hidden_output[i], 2)}' for i in range(hidden_size)]
+    output_nodes = [f'O{i}:{round(final_output[i], 2)}' for i in range(output_size)]
+
+    G.add_nodes_from(input_nodes, layer='input')
+    G.add_nodes_from(hidden_nodes, layer='hidden')
+    G.add_nodes_from(output_nodes, layer='output')
+
+    for i in range(input_size):
+        for j in range(hidden_size):
+            G.add_edge(input_nodes[i], hidden_nodes[j], weight=nn.w1[i, j])
+
+    for i in range(hidden_size):
+        for j in range(output_size):
+            G.add_edge(hidden_nodes[i], output_nodes[j], weight=nn.w2[i, j])
+
+    def get_layer_pos(layer_nodes, layer_index, total_layers):
+        layer_size = len(layer_nodes)
+        y_gap = 2
+        y_start = -(layer_size - 1) * y_gap / 2
+        x_pos = layer_index * 0.1  # уменьшить расстояние между слоями
+        return {node: (x_pos, y_start + i * y_gap) for i, node in enumerate(layer_nodes)}
+\end{lstlisting}
+
+\newpage
+
+Продолжение листинга 6
+
+\begin{lstlisting}
+    pos = {}
+    pos.update(get_layer_pos(input_nodes, 0, 3))
+    pos.update(get_layer_pos(hidden_nodes, 1, 3))
+    pos.update(get_layer_pos(output_nodes, 2, 3))
+
+    edge_colors = ['red' if d['weight'] > 1 else 'grey' for u, v, d in G.edges(data=True)]
+
+    plt.figure(figsize=(8, 6))
+
+    nx.draw(G, pos, with_labels=True, node_size=1200, node_color="skyblue", font_size=8, font_weight="bold", arrows=True, edge_color=edge_colors, ax=ax)
+    ax.set_title(subplot_title)
+
+# NCL
+nns = ncl2.ensamble_nn
+#ensamble_nn
+fig, axes = plt.subplots(3, 2, figsize=(20, 20))
+
+for i, (ax, nn) in enumerate(zip(axes.flatten(), nns)):
+    plot_nn_graph(ax, nn, f'Network {i+1}', x_test[1])
+
+plt.tight_layout()
 plt.show()
+
+# EENCL
+nns = eencl.population
+#ensamble_nn
+fig, axes = plt.subplots(3, 2, figsize=(20, 20))
+
+for i, (ax, nn) in enumerate(zip(axes.flatten(), nns)):
+    plot_nn_graph(ax, nn, f'Network {i+1}', x_test[1])
+
+plt.tight_layout()
+plt.show()
+
 \end{lstlisting}
 
-Листинг 4 -- Класс обычной ИНС
+\newpage
+
+Листинг 7 -- Загрузка модели
 
 \begin{lstlisting}
-import numpy as np
-import pickle
-from graphviz import Digraph
-class NeuralNetwork:
-    """
-    Neural Network.
-    """
-    def __init__(self, seed=None):
-        np.random.seed(seed)
+# Загрузка моделей
+loaded_ncl = NCL.load_model('ncl2_ensemble.pkl')
+loaded_eencl = NCL.load_model('eencl_ensemble.pkl')
 
-    def get_layers(self):
-        self.get_input_layer()
-        self.get_output_layer()
+# Оценка
+pred1 = loaded_ncl.predict(x_test)
+pred2 = eencl.combine_average(loaded_eencl.population, x_test)
 
-    def get_input_layer(self):
-        self.input_weight = np.random.random((self.dim, self.neurons)) * 2.0 - 1.0
-        self.bias_input_layer = np.zeros((self.neurons, 1))
+rmse_value = np.sqrt(np.mean((y_test - pred1) ** 2))
+rmse_average = np.sqrt(np.mean((y_test - pred2) ** 2))
 
-    def get_output_layer(self):
-        self.output_weight = np.random.random((self.neurons, 1))  * 2.0 - 1.0
-        self.bias_output_layer = np.zeros((self.t, 1))
+print('EENCL RMSE :', rmse_average)
+print('NCL RMSE   :', rmse_value)
 \end{lstlisting}
 
-\newpage
-
-Продолжение Листинг 4
-
-\begin{lstlisting}
-    def initial(self, x, y, max_iter, neurons, learning_rate, neuronal_fun, fun_dict):
-        self.dim = x.shape[1]
-        self.t = y.shape[1]
-        self.max_iter = max_iter
-        self.neurons = neurons
-        self.learning_rate = learning_rate
-        self.activation = fun_dict[neuronal_fun]['activation']
-        self.activation_der = fun_dict[neuronal_fun]['derivative']
-        self.get_layers()
-        return self
-
-
-    def train(self, x, y,
-              max_iter: int = 1000,
-              neurons: int = 10,
-              learning_rate: float = 1.0,
-              neuronal_fun='sigmoid'):
-
-        self.initial(x=x,
-                     y=y,
-                     max_iter=max_iter,
-                     neurons=neurons,
-                     learning_rate=learning_rate,
-                     neuronal_fun=neuronal_fun)
-
-        for iteration in range(self.max_iter):
-            # print('Iteration =', iteration)
-            self.backward(x, y)
-           
-    def train(self, x, y, max_iter=500, neurons=5, learning_rate=0.01, neuronal_fun='sigmoid', fun_dict=None):
-        self.initial(x=x, y=y, max_iter=max_iter, neurons=neurons, learning_rate=learning_rate, neuronal_fun=neuronal_fun, fun_dict=fun_dict)
-        for iteration in range(self.max_iter):
-            self.backward(x, y)
-\end{lstlisting}
-
-\newpage
-
-Продолжение Листинг 4
-            
-\begin{lstlisting} 
-    def backward(self, x, y, penalty=0):
-        hidden_layer, output_layer = self.forward(x)
-        error = output_layer - y
-        nc_error = error + penalty
-
-        output_delta = nc_error * self.activation_der(self.temp_o)
-        self.bias_output_layer -= np.mean(self.learning_rate * output_delta)
-        self.output_weight -= self.learning_rate * np.dot(hidden_layer.T, output_delta)
-
-        hidden_delta = np.dot(output_delta, self.output_weight.T) * self.activation_der(self.temp_h)
-        self.bias_input_layer -= np.mean(self.learning_rate * hidden_delta, axis=0).reshape(self.neurons, 1)
-        self.input_weight -= self.learning_rate * np.dot(x.T, hidden_delta)
-
-    def forward(self, x_test):
-        self.temp_h = np.dot(x_test, self.input_weight) + self.bias_input_layer.T
-        hidden_layer = self.activation(self.temp_h)
-        self.temp_o = np.dot(hidden_layer, self.output_weight) + self.bias_output_layer.T
-        output_layer = self.activation(self.temp_o)
-        return hidden_layer, output_layer
-
-    def predict(self, x_test):
-        _, output_layer = self.forward(x_test)
-        return output_layer
-
-    def predict(self, x_test):
-        _, output_layer = self.forward(x_test)
-        return output_layer
-
-    def save_model(self, file_path):
-        with open(file_path, 'wb') as f:
-            pickle.dump(self, f)
-
-    @staticmethod
-    def load_model(file_path):
-        with open(file_path, 'rb') as f:
-            return pickle.load(f)
-        
-\end{lstlisting}
-
-\newpage
-
-Листинг 5 -- Класс NCL
-
-\begin{lstlisting}
-class NCL:
-    def __init__(self):
-        self.base_learner = []
-        self.rmse_array = None
-
-    def visualize(self, file_path='ncl_ensemble', node_size=0.1, graph_size=100, horizontal_spacing=10):
-        dot = Digraph()
-
-        dot.attr(rankdir='LR')
-        dot.attr(size=f'{graph_size},{graph_size}!')
-        
-        dot.attr(ranksep=str(horizontal_spacing))
-
-        for i, learner in enumerate(self.base_learner):
-            dot.node(f'Learner {i}', label=f'Learner {i}', shape='ellipse')
-            learner_dot = Digraph()
-
-            learner_dot.attr(rankdir='LR')
-
-            # Input layer
-            for j in range(learner.dim):
-                learner_dot.node(f'Input {j}', shape='circle', width=str(node_size), height=str(node_size))
-
-            # Hidden layer
-            for k in range(learner.neurons):
-                learner_dot.node(f'Hidden {k}', shape='circle', width=str(node_size), height=str(node_size))
-
-            # Output layer
-            learner_dot.node('Output', shape='circle', width=str(node_size), height=str(node_size))
-
-            # Input to hidden layer connections
-            for j in range(learner.dim):
-                for k in range(learner.neurons):
-                    learner_dot.edge(f'Input {j}', f'Hidden {k}', label=f'{learner.input_weight[j, k]:.2f}')
-
-            # Hidden to output layer connections
-            for k in range(learner.neurons):
-                learner_dot.edge(f'Hidden {k}', 'Output', label=f'{learner.output_weight[k, 0]:.2f}')
-\end{lstlisting}
-
-\newpage
-
-Продолжение Листинг 5
-            
-\begin{lstlisting} 
-            learner_dot.render(f'{file_path}_learner_{i}', format='png', cleanup=True)
-            dot.subgraph(learner_dot)
-
-        dot.render(file_path, format='png', cleanup=True)
-    
-    def train(self, x, y, size, neurons, max_iter, lambda_, learning_rate, neural_fun='sigmoid', fun_dict=None):
-        self.size = size
-        self.max_iter = max_iter
-        self.lambda_ = lambda_
-        self.base_learner = [NeuralNetwork(seed=s).initial(x=x, y=y, neurons=neurons, learning_rate=learning_rate, neuronal_fun=neural_fun, max_iter=max_iter, fun_dict=fun_dict)
-                             for s in range(self.size)]
-
-        self.rmse_array = np.inf * np.ones(self.max_iter)
-
-        for iteration in range(self.max_iter):
-            f_bar = self.predict(x)
-            for s in range(self.size):
-                penalty = self.lambda_ * (self.base_learner[s].predict(x) - f_bar)
-                self.base_learner[s].backward(x, y, penalty)
-            self.rmse_array[iteration] = np.sqrt(np.mean((f_bar - y) ** 2))
-
-    def predict(self, x):
-        f_bar = np.mean([learner.predict(x) for learner in self.base_learner], axis=0)
-        return f_bar
-
-    def save_model(self, file_path):
-        with open(file_path, 'wb') as f:
-            pickle.dump(self, f)
-
-    @staticmethod
-    def load_model(file_path):
-        with open(file_path, 'rb') as f:
-            return pickle.load(f)
-\end{lstlisting}
-
-\newpage
-
-Листинг 6 -- Загрузка сохраненной модели
-
-\begin{lstlisting}
-# Load model
-loaded_ncl = NCL.load_model('ncl_ensemble.pkl')
-
-# Test model
-pred= loaded_ncl.predict(x_test)
-rmse_value = rmse(pred, y_test)
-print('RMSE =', rmse_value)
-\end{lstlisting}
+\newpage % Разрыв страницы
 
 \begin{thebibliography}{9}
 \bibitem{bishop} 
